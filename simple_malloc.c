@@ -106,24 +106,3 @@ void simple_free(void* ptr) {
     // Attempt to coalesce with adjacent blocks
     coalesce(block);
 }
-
-int main() {
-    // Example usage
-    void* ptr1 = simple_malloc(100);
-    printf("Allocated 100 bytes at %p\n", ptr1);
-
-    void* ptr2 = simple_malloc(200);
-    printf("Allocated 200 bytes at %p\n", ptr2);
-
-    simple_free(ptr1);
-    printf("Freed 100 bytes\n");
-
-    void* ptr3 = simple_malloc(50);
-    printf("Allocated 50 bytes at %p\n", ptr3);
-
-    simple_free(ptr2);
-    simple_free(ptr3);
-    printf("Freed remaining allocations\n");
-
-    return 0;
-}
