@@ -48,6 +48,7 @@ void* simple_malloc(size_t size) {
         }
 
         block->free = 0;
+        printf("Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
         return (char*)block + BLOCK_HEADER_SIZE;
     }
 
@@ -74,6 +75,7 @@ void* simple_malloc(size_t size) {
         block->prev = last;
     }
 
+    printf("Extended heap and allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
     return (char*)block + BLOCK_HEADER_SIZE;
 }
 
@@ -103,6 +105,23 @@ void simple_free(void* ptr) {
     BlockHeader* block = (BlockHeader*)((char*)ptr - BLOCK_HEADER_SIZE);
     block->free = 1;
 
+    printf("Freed %zu bytes at address %p\n", block->size, ptr);
+
     // Attempt to coalesce with adjacent blocks
     coalesce(block);
+}
+
+int main() {
+    // Example usage
+    void* ptr1 = simple_malloc(100);
+    void* ptr2 = simple_malloc(200);
+
+    simple_free(ptr1);
+
+    void* ptr3 = simple_malloc(50);
+
+    simple_free(ptr2);
+    simple_free(ptr3);
+
+    return 0;
 }
