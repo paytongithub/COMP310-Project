@@ -5,18 +5,18 @@
 #define BLOCK_HEADER_SIZE sizeof(BlockHeader)
 
 // Block header structure to track each allocation
-typedef struct BlockHeader {
+struct BlockHeader {
     size_t size;               // Size of the block
     int free;                  // Whether the block is free or not
     struct BlockHeader* next;  // Pointer to the next block
     struct BlockHeader* prev;  // Pointer to the previous block
 } BlockHeader;
 
-static BlockHeader* freeList = NULL;  // Start of the free list
+static struct BlockHeader* freeList = NULL;  // Start of the free list
 
 // Utility function to find the first-fit free block
-BlockHeader* find_first_fit(size_t size) {
-    BlockHeader* current = freeList;
+struct BlockHeader* find_first_fit(size_t size) {
+    struct BlockHeader* current = freeList;
     while (current != NULL) {
         if (current->free && current->size >= size) {
             return current;
@@ -28,12 +28,12 @@ BlockHeader* find_first_fit(size_t size) {
 
 void* simple_malloc(size_t size) {
     // Find the first-fit free block
-    BlockHeader* block = find_first_fit(size);
+    struct BlockHeader* block = find_first_fit(size);
 
     if (block != NULL) {
         // Split the block if there's excess space
         if (block->size >= size + BLOCK_HEADER_SIZE) {
-            BlockHeader* newBlock = (BlockHeader*)((char*)block + BLOCK_HEADER_SIZE + size);
+            struct BlockHeader* newBlock = (struct BlockHeader*)((char*)block + BLOCK_HEADER_SIZE + size);
             newBlock->size = block->size - size - BLOCK_HEADER_SIZE;
             newBlock->free = 1;
             newBlock->next = block->next;
@@ -67,7 +67,7 @@ void* simple_malloc(size_t size) {
     if (freeList == NULL) {
         freeList = block;
     } else {
-        BlockHeader* last = freeList;
+        struct BlockHeader* last = freeList;
         while (last->next) {
             last = last->next;
         }
@@ -79,7 +79,7 @@ void* simple_malloc(size_t size) {
     return (char*)block + BLOCK_HEADER_SIZE;
 }
 
-void coalesce(BlockHeader* block) {
+void coalesce(struct BlockHeader* block) {
     // Merge with next block if it's free
     if (block->next && block->next->free) {
         block->size += BLOCK_HEADER_SIZE + block->next->size;
@@ -102,26 +102,11 @@ void coalesce(BlockHeader* block) {
 void simple_free(void* ptr) {
     if (ptr == NULL) return;
 
-    BlockHeader* block = (BlockHeader*)((char*)ptr - BLOCK_HEADER_SIZE);
+    struct BlockHeader* block = (struct BlockHeader*)((char*)ptr - BLOCK_HEADER_SIZE);
     block->free = 1;
 
     printf("Freed %zu bytes at address %p\n", block->size, ptr);
 
     // Attempt to coalesce with adjacent blocks
     coalesce(block);
-}
-
-int main() {
-    // Example usage
-    void* ptr1 = simple_malloc(100);
-    void* ptr2 = simple_malloc(200);
-
-    simple_free(ptr1);
-
-    void* ptr3 = simple_malloc(50);
-
-    simple_free(ptr2);
-    simple_free(ptr3);
-
-    return 0;
 }
