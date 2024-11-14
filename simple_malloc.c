@@ -4,6 +4,8 @@
 
 #define BLOCK_HEADER_SIZE sizeof(BlockHeader)
 
+FILE *fptr;
+
 // Block header structure to track each allocation
 struct BlockHeader {
     size_t size;               // Size of the block
@@ -48,7 +50,10 @@ void* simple_malloc(size_t size) {
         }
 
         block->free = 0;
-        printf("Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
+
+        fptr = fopen("malloc_log.txt", "a");
+        fprintf(fptr, "Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
+	fclose(fptr);
         return (char*)block + BLOCK_HEADER_SIZE;
     }
 
@@ -75,7 +80,9 @@ void* simple_malloc(size_t size) {
         block->prev = last;
     }
 
-    printf("Extended heap and allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
+    fptr = fopen("malloc_log.txt", "a");
+    fprintf(fptr, "Extended heap and allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
+    fclose(fptr);
     return (char*)block + BLOCK_HEADER_SIZE;
 }
 
@@ -104,8 +111,10 @@ void simple_free(void* ptr) {
 
     struct BlockHeader* block = (struct BlockHeader*)((char*)ptr - BLOCK_HEADER_SIZE);
     block->free = 1;
-
-    printf("Freed %zu bytes at address %p\n", block->size, ptr);
+    
+    fptr = fopen("malloc_log.txt", "a");
+    fprintf(fptr, "Freed %zu bytes at address %p\n", block->size, ptr);
+    fclose(fptr);
 
     // Attempt to coalesce with adjacent blocks
     coalesce(block);

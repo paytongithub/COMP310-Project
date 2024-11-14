@@ -39,6 +39,8 @@
 
 #include "bashintl.h"
 
+#include "../../simple_malloc.h"
+
 #if !defined (PTR_T)
 #  if defined (__STDC__)
 #    define PTR_T void *

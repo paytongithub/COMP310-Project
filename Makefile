@@ -18,4 +18,4 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(TARGET)
-
+	rm malloc_log.txt
