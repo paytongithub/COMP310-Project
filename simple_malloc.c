@@ -54,6 +54,7 @@ void* simple_malloc(size_t size) {
         fptr = fopen("malloc_log.txt", "a");
         fprintf(fptr, "Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
 	fclose(fptr);
+	printf("simple_malloc called");
         return (char*)block + BLOCK_HEADER_SIZE;
     }
 
@@ -115,7 +116,8 @@ void simple_free(void* ptr) {
     fptr = fopen("malloc_log.txt", "a");
     fprintf(fptr, "Freed %zu bytes at address %p\n", block->size, ptr);
     fclose(fptr);
+    printf("simple_free called");
 
-    // Attempt to coalesce with adjacent blocks
+// Attempt to coalesce with adjacent blocks
     coalesce(block);
 }
