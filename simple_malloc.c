@@ -54,7 +54,9 @@ void* simple_malloc(size_t size) {
         fptr = fopen("malloc_log.txt", "a");
         fprintf(fptr, "Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
 	fclose(fptr);
-	printf("simple_malloc called");
+	analyze_malloc();
+	// TODO: Write code to print current heap structur
+	// Print allocated bytes, then visualization of heap OR metric of fragmentation.
         return (char*)block + BLOCK_HEADER_SIZE;
     }
 
@@ -84,6 +86,7 @@ void* simple_malloc(size_t size) {
     fptr = fopen("malloc_log.txt", "a");
     fprintf(fptr, "Extended heap and allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
     fclose(fptr);
+    analyze_malloc();
     return (char*)block + BLOCK_HEADER_SIZE;
 }
 
@@ -116,8 +119,27 @@ void simple_free(void* ptr) {
     fptr = fopen("malloc_log.txt", "a");
     fprintf(fptr, "Freed %zu bytes at address %p\n", block->size, ptr);
     fclose(fptr);
-    printf("simple_free called");
-
 // Attempt to coalesce with adjacent blocks
     coalesce(block);
+    analyze_malloc();
+}
+
+void analyze_malloc() {
+    struct BlockHeader* cursor = freeList;
+    int totalSize = 0;
+    int count = 0;
+    while (cursor->next != NULL) {
+	if (cursor->free != 0) {
+	    count++;
+	    totalSize += (int)cursor->size;
+	}
+	cursor = cursor->next;
+    }
+    int average = 0;
+    if (count > 0) {
+	average = totalSize / count;
+    }
+    fptr = fopen("malloc_log.txt", "a");
+    fprintf(fptr, "Avergae size of free block: %i\n", average);
+    fclose(fptr);
 }
