@@ -58,6 +58,8 @@ LIBBUILD = ${BUILD_DIR}/lib
 
 PROFILE_FLAGS = 
 CFLAGS = -g -O2
+CFLAGS += -D malloc=simple_malloc
+CFLAGS += -D free=simple_free
 CFLAGS_FOR_BUILD = -g -O2 
 STYLE_CFLAGS = -Wno-parentheses -Wno-format-security
 CPPFLAGS = 

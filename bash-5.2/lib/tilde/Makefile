@@ -41,6 +41,8 @@ SHELL = /bin/sh
 PROFILE_FLAGS = 
 
 CFLAGS = -g -O2
+CFLAGS += -D malloc=simple_malloc
+CFLAGS += -D free=simple_free
 LOCAL_CFLAGS = 
 STYLE_CFLAGS = -Wno-parentheses -Wno-format-security
 CPPFLAGS = 

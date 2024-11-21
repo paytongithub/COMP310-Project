@@ -57,6 +57,8 @@ static int brkfound;
 static size_t allocated;
 #endif
 
+#include "../simple_malloc.h"
+
 /* **************************************************************** */
 /*								    */
 /*		   Memory Allocation and Deallocation.		    */

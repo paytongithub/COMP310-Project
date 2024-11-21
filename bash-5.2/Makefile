@@ -242,7 +242,8 @@ SHLIB_SOURCE =	${SH_LIBSRC}/clktck.c ${SH_LIBSRC}/getcwd.c \
 		${SH_LIBSRC}/wcswidth.c ${SH_LIBSRC}/wcsnwidth.c \
 		${SH_LIBSRC}/shmbchar.c ${SH_LIBSRC}/utf8.c \
 		${SH_LIBSRC}/random.c ${SH_LIBSRC}/gettimeofday.c \
-		${SH_LIBSRC}/timers.c ${SH_LIBSRC}/strvis.c
+		${SH_LIBSRC}/timers.c ${SH_LIBSRC}/strvis.c \
+		${SH_LIBSRC}/simple_malloc.c
 
 SHLIB_LIB = -lsh
 SHLIB_LIBNAME = libsh.a

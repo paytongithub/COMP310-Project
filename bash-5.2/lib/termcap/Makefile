@@ -41,6 +41,8 @@ MV = mv
 SHELL = /bin/sh
 
 CFLAGS = -g -O2
+CFLAGS += -D malloc=simple_malloc
+CFLAGS += -D free=simple_free
 CPPFLAGS = 
 LDFLAGS =  -L./lib/termcap
 

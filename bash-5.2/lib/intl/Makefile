@@ -68,6 +68,8 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" -DLOCALE_ALIAS_PATH=\"$(aliaspath)\" \
 -DDEPENDS_ON_LIBICONV=1 -DHAVE_CONFIG_H ${LOCAL_DEFS}
 CPPFLAGS = 
 CFLAGS = -g -O2
+CFLAGS += -D malloc=simple_malloc
+CFLAGS += -D free=simple_free
 LDFLAGS =  -L./lib/termcap
 LIBS = -ldl 
 
