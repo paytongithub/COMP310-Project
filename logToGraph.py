@@ -14,7 +14,9 @@ for x in f:
 
 f.close()
 
-plt.plot(range(len(ys)), ys, label = "Line")
+xs = range(len(ys))
+
+plt.plot(xs, ys, label = "Line")
 
 plt.xlabel("x - Calls of simple_malloc or simple_free")
 plt.ylabel("y - Fragmentation")
