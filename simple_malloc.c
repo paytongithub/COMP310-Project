@@ -126,28 +126,26 @@ void simple_free(void* ptr) {
 
 void analyze_malloc() {
     struct BlockHeader* cursor = freeList;
-    int totalSizeFree = 0;
-    int countFree = 0;
-    int totalSizeUsed = 0;
+    double totalSizeFree = 0;
+    double largestFree = 0;
     while (cursor->next != NULL) {
 	if (cursor->free != 0) {
-	    countFree++;
-	    totalSizeFree += (int)cursor->size;
-	} else {
-	    totalSizeUsed += (int)cursor->size;
+	    if (cursor->size > largestFree) {
+                largestFree = cursor->size;
+	    }
+	    totalSizeFree += (double)cursor->size;
 	}
 	cursor = cursor->next;
     }
-    if (countFree <= 0) {
+    if (totalSizeFree <= 0) {
         fptr = fopen("malloc_log.txt", "a");
         fprintf(fptr, "No free blocks in the heap\n");
         fclose(fptr);
 	return;
     }
-    double averageFree = totalSizeFree / countFree;
-    double totalSize = totalSizeUsed + totalSizeFree;
+    double frag = (totalSizeFree - largestFree) / totalSizeFree;
     fptr = fopen("malloc_log.txt", "a");
-    fprintf(fptr, "Average size of free block: %f percent of the heap\n", averageFree*100/totalSize);
+    fprintf(fptr, "totalSizeFree: %f, largestFree: %f, Fragmentation: %f\n", totalSizeFree, largestFree, frag);
     fclose(fptr);
 }
 

@@ -1,9 +1,20 @@
 import matplotlib.pyplot as plt
 
-x1 = [1,2,3]
-y1 = [2,4,1]
+ys = []
 
-plt.plot(x1, y1, label = "Line")
+f = open("malloc_log.txt", "r")
+
+tmp = ""
+
+for x in f:
+  tmp = x
+  if "Fragmentation" in  tmp:
+      tmp = tmp.split()
+      ys.append(float(tmp[-1]))
+
+f.close()
+
+plt.plot(range(len(ys)), ys, label = "Line")
 
 plt.xlabel("x - Calls of simple_malloc or simple_free")
 plt.ylabel("y - Fragmentation")
