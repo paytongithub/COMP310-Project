@@ -143,7 +143,10 @@ void analyze_malloc() {
         fclose(fptr);
 	return;
     }
-    double frag = (totalSizeFree - largestFree) / totalSizeFree;
+    double frag = 0;
+    if (totalSizeFree > 0) {
+        frag = (totalSizeFree - largestFree) / totalSizeFree;
+    }
     fptr = fopen("malloc_log.txt", "a");
     fprintf(fptr, "totalSizeFree: %f, largestFree: %f, Fragmentation: %f\n", totalSizeFree, largestFree, frag);
     fclose(fptr);

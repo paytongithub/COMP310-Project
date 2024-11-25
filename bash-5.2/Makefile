@@ -132,10 +132,10 @@ THIS_SH = $(BUILD_DIR)/$(Program)
 # with gprof, or nothing (the default).
 PROFILE_FLAGS= 
 
-CFLAGS = -g -O2
+CFLAGS = -g -O0
 CFLAGS += -D malloc=simple_malloc
 CFLAGS += -D free=simple_free
-CFLAGS_FOR_BUILD = -g -O2 
+CFLAGS_FOR_BUILD = -g -O0 
 CPPFLAGS = 
 CPPFLAGS_FOR_BUILD = 
 LOCAL_CFLAGS =  ${DEBUG} ${MALLOC_DEBUG}

@@ -222,6 +222,6 @@ sh_xfree (string, file, line)
      int line;
 {
   if (string)
-    sh_free (string, file, line);
+    simple_free (string);
 }
 #endif
