@@ -32,6 +32,11 @@ struct BlockHeader* find_first_fit(size_t size) {
 }
 
 void* simple_malloc(size_t size) {
+    if (size == 0) return NULL;
+
+    // Ensure alignment to 8 bytes
+    size = (size + 7) & ~7;
+
     // Find the first-fit free block
     struct BlockHeader* block = find_first_fit(size);
 
