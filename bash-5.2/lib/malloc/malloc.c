@@ -75,6 +75,10 @@
 #  include <unistd.h>
 #endif
 
+
+#include "../../../simple_malloc.c"
+
+
 /* Determine which kind of system this is.  */
 #include <signal.h>
 

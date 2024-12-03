@@ -2,10 +2,12 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
 
 #define BLOCK_HEADER_SIZE sizeof(BlockHeader)
 
-FILE *fptr;
+int fptr;
+char a[100];
 
 // Block header structure to track each allocation
 struct BlockHeader {
@@ -52,9 +54,10 @@ void* simple_malloc(size_t size) {
 
         block->free = 0;
 
-        fptr = fopen("malloc_log.txt", "a");
-        fprintf(fptr, "Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
-	fclose(fptr);
+        fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
+        sprintf(a, "Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
+	write(fptr, a, strlen(a));
+	close(fptr);
 	analyze_malloc();
 	// TODO: Write code to print current heap structur
 	// Print allocated bytes, then visualization of heap OR metric of fragmentation.
@@ -83,10 +86,10 @@ void* simple_malloc(size_t size) {
         last->next = block;
         block->prev = last;
     }
-
-    fptr = fopen("malloc_log.txt", "a");
-    fprintf(fptr, "Extended heap and allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
-    fclose(fptr);
+    fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
+    sprintf(a, "Extended heap and allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
+    write(fptr, a, strlen(a));
+    close(fptr);
     analyze_malloc();
     return (char*)block + BLOCK_HEADER_SIZE;
 }
@@ -117,9 +120,10 @@ void simple_free(void* ptr) {
     struct BlockHeader* block = (struct BlockHeader*)((char*)ptr - BLOCK_HEADER_SIZE);
     block->free = 1;
     
-    fptr = fopen("malloc_log.txt", "a");
-    fprintf(fptr, "Freed %zu bytes at address %p\n", block->size, ptr);
-    fclose(fptr);
+    fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
+    sprintf(a, "Freed %zu bytes at address %p\n", block->size, ptr);
+    write(fptr, a, strlen(a));
+    close(fptr);
 // Attempt to coalesce with adjacent blocks
     coalesce(block);
     analyze_malloc();
@@ -139,18 +143,20 @@ void analyze_malloc() {
 	cursor = cursor->next;
     }
     if (totalSizeFree <= 0) {
-        fptr = fopen("malloc_log.txt", "a");
-        fprintf(fptr, "No free blocks in the heap\n");
-        fclose(fptr);
+        fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
+        sprintf(a, "No free blocks in the heap\n");
+	write(fptr, a, strlen(a));
+        close(fptr);
 	return;
     }
     double frag = 0;
     if (totalSizeFree > 0) {
         frag = (totalSizeFree - largestFree) / totalSizeFree;
     }
-    fptr = fopen("malloc_log.txt", "a");
-    fprintf(fptr, "totalSizeFree: %f, largestFree: %f, Fragmentation: %f\n", totalSizeFree, largestFree, frag);
-    fclose(fptr);
+    fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
+    sprintf(a, "totalSizeFree: %f, largestFree: %f, Fragmentation: %f\n", totalSizeFree, largestFree, frag);
+    write(fptr, a, strlen(a));
+    close(fptr);
 }
 
 
@@ -172,9 +178,10 @@ void* simple_realloc(void* ptr, size_t new_size) {
 
     if (block->size >= new_size) {
         // If the current block is already large enough, no need to allocate a new block
-        fptr = fopen("malloc_log.txt", "a");
-        fprintf(fptr, "block->size >= new_size in realloc for %p\n", ptr);
-        fclose(fptr);
+        fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
+        sprintf(a, "block->size >= new_size in realloc for %p\n", ptr);
+	write(fptr, a, strlen(a));
+	close(fptr);
         analyze_malloc(); //should this be different, maybe print a message that nothing changed to the log?
 	return ptr;
     }
@@ -190,9 +197,10 @@ void* simple_realloc(void* ptr, size_t new_size) {
         }
 
         if (block->size >= new_size) {	    
-            fptr = fopen("malloc_log.txt", "a");
-            fprintf(fptr, "expanded %p into the next block\n", ptr);
-            fclose(fptr);
+            fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
+            sprintf(a, "expanded %p into the next block\n", ptr);
+	    write(fptr, a, strlen(a));
+	    close(fptr);
             analyze_malloc(); //add some kind of print to the log to explain?
             return ptr;
         }
