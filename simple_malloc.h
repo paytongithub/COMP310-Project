@@ -25,6 +25,7 @@ void* simple_malloc(size_t size);
 void coalesce(struct BlockHeader* block);
 void simple_free(void* ptr);
 void analyze_malloc();
+void* simple_realloc(void* ptr, size_t new_size);
 
 #endif // SIMPLE_MALLOC_H
 

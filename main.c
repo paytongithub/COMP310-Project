@@ -9,4 +9,6 @@ int main() {
     void* ptr5 = simple_malloc(15);
     simple_free(ptr3);
     void* ptr6 = simple_malloc(26);
+    ptr2 = simple_realloc(ptr2, 17);
+    return 0;
 }

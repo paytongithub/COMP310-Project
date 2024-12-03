@@ -55,8 +55,8 @@ CTAGS = ctags -tw
 DEBUG = 
 
 CFLAGS = -g -O2
-CFLAGS += -D malloc=simple_malloc
-CFLAGS += -D free=simple_free
+#CFLAGS += -D malloc=simple_malloc
+#CFLAGS += -D free=simple_free
 LOCAL_CFLAGS =  ${DEBUG}
 STYLE_CFLAGS = -Wno-parentheses -Wno-format-security
 CPPFLAGS = 

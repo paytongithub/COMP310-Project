@@ -1506,7 +1506,8 @@ PTR_T
 malloc (size)
      size_t size;
 {
-  return internal_malloc (size, (char *)NULL, 0, 0);
+  return simple_malloc(size);
+//  return internal_malloc (size, (char *)NULL, 0, 0);
 }
 
 PTR_T
@@ -1521,7 +1522,8 @@ void
 free (mem)
      PTR_T mem;
 {
-  internal_free (mem,  (char *)NULL, 0, 0);
+  simple_free(mem);
+//  internal_free (mem,  (char *)NULL, 0, 0);
 }
 
 PTR_T

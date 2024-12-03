@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #define BLOCK_HEADER_SIZE sizeof(BlockHeader)
 
@@ -150,5 +151,67 @@ void analyze_malloc() {
     fptr = fopen("malloc_log.txt", "a");
     fprintf(fptr, "totalSizeFree: %f, largestFree: %f, Fragmentation: %f\n", totalSizeFree, largestFree, frag);
     fclose(fptr);
+}
+
+
+//ADD ANALYZE
+void* simple_realloc(void* ptr, size_t new_size) {
+    if (ptr == NULL) {
+        // If the pointer is NULL, realloc behaves like malloc
+        return simple_malloc(new_size);
+    }
+
+    if (new_size == 0) {
+        // If the new size is 0, free the memory and return NULL
+        simple_free(ptr);
+        return NULL;
+    }
+
+    // Get the block header of the current block
+    struct BlockHeader* block = (struct BlockHeader*)((char*)ptr - BLOCK_HEADER_SIZE);
+
+    if (block->size >= new_size) {
+        // If the current block is already large enough, no need to allocate a new block
+        fptr = fopen("malloc_log.txt", "a");
+        fprintf(fptr, "block->size >= new_size in realloc for %p\n", ptr);
+        fclose(fptr);
+        analyze_malloc(); //should this be different, maybe print a message that nothing changed to the log?
+	return ptr;
+    }
+
+    // Check if we can expand into the adjacent free block
+    if (block->next && block->next->free &&
+        block->size + BLOCK_HEADER_SIZE + block->next->size >= new_size) {
+        // Merge with the next block
+        block->size += BLOCK_HEADER_SIZE + block->next->size;
+        block->next = block->next->next;
+        if (block->next) {
+            block->next->prev = block;
+        }
+
+        if (block->size >= new_size) {	    
+            fptr = fopen("malloc_log.txt", "a");
+            fprintf(fptr, "expanded %p into the next block\n", ptr);
+            fclose(fptr);
+            analyze_malloc(); //add some kind of print to the log to explain?
+            return ptr;
+        }
+    }
+
+    // Allocate a new block
+    void* new_ptr = simple_malloc(new_size);
+    if (new_ptr == NULL) {
+	//add something to log this?
+        return NULL; // Allocation failed
+    }
+
+    // Copy data from the old block to the new block
+    size_t copy_size = block->size < new_size ? block->size : new_size;
+    memcpy(new_ptr, ptr, copy_size);
+
+    // Free the old block
+    simple_free(ptr);
+
+    return new_ptr;
 }
 
