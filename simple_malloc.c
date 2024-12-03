@@ -39,10 +39,10 @@ void* simple_malloc(size_t size) {
 
     // Find the first-fit free block
     struct BlockHeader* block = find_first_fit(size);
-
+    
     if (block != NULL) {
         // Split the block if there's excess space
-        if (block->size >= size + BLOCK_HEADER_SIZE) {
+        if (block->size >= size + BLOCK_HEADER_SIZE + 8) { // Ensure room for a valid new block
             struct BlockHeader* newBlock = (struct BlockHeader*)((char*)block + BLOCK_HEADER_SIZE + size);
             newBlock->size = block->size - size - BLOCK_HEADER_SIZE;
             newBlock->free = 1;
@@ -59,20 +59,20 @@ void* simple_malloc(size_t size) {
 
         block->free = 0;
 
-        fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
-        sprintf(a, "Allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
-	write(fptr, a, strlen(a));
-	close(fptr);
-	analyze_malloc();
-	// TODO: Write code to print current heap structur
-	// Print allocated bytes, then visualization of heap OR metric of fragmentation.
+        fptr = open("malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
+        sprintf(a, "Allocated %zu bytes at address %p\n", size, (char*)block + BLOCK_HEADER_SIZE);
+        write(fptr, a, strlen(a));
+        close(fptr);
+
+        analyze_malloc();
         return (char*)block + BLOCK_HEADER_SIZE;
     }
 
     // No suitable free block found, extend the heap
     block = sbrk(size + BLOCK_HEADER_SIZE);
     if (block == (void*)-1) {
-        return NULL;  // sbrk failed
+        perror("sbrk failed");
+        return NULL;
     }
 
     block->size = size;
@@ -80,7 +80,6 @@ void* simple_malloc(size_t size) {
     block->next = NULL;
     block->prev = NULL;
 
-    // Attach to the end of the free list
     if (freeList == NULL) {
         freeList = block;
     } else {
@@ -91,10 +90,12 @@ void* simple_malloc(size_t size) {
         last->next = block;
         block->prev = last;
     }
-    fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);
-    sprintf(a, "Extended heap and allocated %zu bytes at address %p (Block total size: %zu)\n", size, (char*)block + BLOCK_HEADER_SIZE, block->size + BLOCK_HEADER_SIZE);
+
+    fptr = open("malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
+    sprintf(a, "Extended heap and allocated %zu bytes at address %p\n", size, (char*)block + BLOCK_HEADER_SIZE);
     write(fptr, a, strlen(a));
     close(fptr);
+
     analyze_malloc();
     return (char*)block + BLOCK_HEADER_SIZE;
 }
