@@ -229,3 +229,32 @@ void* simple_realloc(void* ptr, size_t new_size) {
     return new_ptr;
 }
 
+void* simple_calloc(size_t num, size_t size) {
+    if (num == 0 || size == 0) {
+        return NULL;  // Return NULL if num or size is zero
+    }
+
+    size_t total_size = num * size;
+
+    // Check for overflow
+    if (size != 0 && total_size / size != num) {
+        return NULL;  // Overflow occurred
+    }
+
+    // Allocate memory using simple_malloc
+    void* ptr = simple_malloc(total_size);
+    if (ptr == NULL) {
+        return NULL;  // Allocation failed
+    }
+
+    // Initialize the allocated memory to zero
+    memset(ptr, 0, total_size);
+
+    fptr = open("malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
+    sprintf(a, "Calloc'ed %zu bytes (%zu elements of size %zu) at address %p\n", total_size, num, size, ptr);
+    write(fptr, a, strlen(a));
+    close(fptr);
+
+    return ptr;
+}
+

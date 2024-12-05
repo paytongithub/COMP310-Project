@@ -1552,7 +1552,7 @@ PTR_T
 calloc (n, s)
      size_t n, s;
 {
-  return internal_calloc (n, s, (char *)NULL, 0, 0);
+  return simple_calloc (n, s);
 }
 
 void

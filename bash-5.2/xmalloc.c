@@ -113,7 +113,7 @@ xmalloc (bytes)
 #endif
 
   FINDBRK();
-  temp = malloc (bytes);
+  temp = simple_malloc (bytes);
 
   if (temp == 0)
     allocerr ("xmalloc", bytes);
@@ -184,7 +184,7 @@ sh_xmalloc (bytes, file, line)
 #endif
 
   FINDBRK();
-  temp = sh_malloc (bytes, file, line);
+  temp = simple_malloc (bytes);
 
   if (temp == 0)
     sh_allocerr ("xmalloc", bytes, file, line);
