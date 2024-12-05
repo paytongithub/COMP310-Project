@@ -1439,7 +1439,7 @@ sh_malloc (bytes, file, line)
      const char *file;
      int line;
 {
-  return internal_malloc (bytes, file, line, MALLOC_WRAPPER);
+  return simple_malloc (bytes);
 }
 
 PTR_T
@@ -1449,7 +1449,7 @@ sh_realloc (ptr, size, file, line)
      const char *file;
      int line;
 {
-  return internal_realloc (ptr, size, file, line, MALLOC_WRAPPER);
+  return simple_realloc (ptr, size);
 }
 
 void
@@ -1519,7 +1519,7 @@ realloc (mem, nbytes)
      PTR_T mem;
      size_t nbytes;
 {
-  return internal_realloc (mem, nbytes, (char *)NULL, 0, 0);
+  return simple_realloc (mem, nbytes);
 }
 
 void

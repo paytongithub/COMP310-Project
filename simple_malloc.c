@@ -101,8 +101,11 @@ void* simple_malloc(size_t size) {
 }
 
 void coalesce(struct BlockHeader* block) {
-    // Merge with next block if it's free
-    if (block->next && block->next->free) {
+    if (block == NULL || block->size == 0) return;
+
+    // Merge with the next block if it's free and valid
+    if (block->next && block->next->free &&
+        (void*)block->next > (void*)freeList && (void*)block->next < sbrk(0)) {
         block->size += BLOCK_HEADER_SIZE + block->next->size;
         block->next = block->next->next;
         if (block->next) {
@@ -110,8 +113,9 @@ void coalesce(struct BlockHeader* block) {
         }
     }
 
-    // Merge with previous block if it's free
-    if (block->prev && block->prev->free) {
+    // Merge with the previous block if it's free and valid
+    if (block->prev && block->prev->free &&
+        (void*)block->prev > (void*)freeList && (void*)block->prev < sbrk(0)) {
         block->prev->size += BLOCK_HEADER_SIZE + block->size;
         block->prev->next = block->next;
         if (block->next) {
@@ -124,6 +128,9 @@ void simple_free(void* ptr) {
     if (ptr == NULL) return;
 
     struct BlockHeader* block = (struct BlockHeader*)((char*)ptr - BLOCK_HEADER_SIZE);
+    if (block->size == 0) {
+	    return;
+    }
     block->free = 1;
     
     fptr = open("malloc_log.txt", O_WRONLY | O_APPEND);

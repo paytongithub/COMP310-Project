@@ -207,7 +207,7 @@ sh_xrealloc (pointer, bytes, file, line)
 #endif
 
   FINDBRK();
-  temp = pointer ? sh_realloc (pointer, bytes, file, line) : sh_malloc (bytes, file, line);
+  temp = pointer ? simple_realloc (pointer, bytes) : simple_malloc (bytes);
 
   if (temp == 0)
     sh_allocerr ("xrealloc", bytes, file, line);
