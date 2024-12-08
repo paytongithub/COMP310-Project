@@ -59,7 +59,7 @@ void* simple_malloc(size_t size) {
 
         block->free = 0;
 
-        fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
+        fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
         sprintf(a, "Allocated %zu bytes at address %p\n", size, (char*)block + BLOCK_HEADER_SIZE);
         write(fptr, a, strlen(a));
         close(fptr);
@@ -91,7 +91,7 @@ void* simple_malloc(size_t size) {
         block->prev = last;
     }
 
-    fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
+    fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
     sprintf(a, "Extended heap and allocated %zu bytes at address %p\n", size, (char*)block + BLOCK_HEADER_SIZE);
     write(fptr, a, strlen(a));
     close(fptr);
@@ -133,7 +133,7 @@ void simple_free(void* ptr) {
     }
     block->free = 1;
     
-    fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND);
+    fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND);
     sprintf(a, "Freed %zu bytes at address %p\n", block->size, ptr);
     write(fptr, a, strlen(a));
     close(fptr);
@@ -156,7 +156,7 @@ void analyze_malloc() {
 	cursor = cursor->next;
     }
     if (totalSizeFree <= 0) {
-        fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND);
+        fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND);
         sprintf(a, "No free blocks in the heap\n");
 	write(fptr, a, strlen(a));
         close(fptr);
@@ -166,7 +166,7 @@ void analyze_malloc() {
     if (totalSizeFree > 0) {
         frag = (totalSizeFree - largestFree) / totalSizeFree;
     }
-    fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND);
+    fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND);
     sprintf(a, "totalSizeFree: %f, largestFree: %f, Fragmentation: %f\n", totalSizeFree, largestFree, frag);
     write(fptr, a, strlen(a));
     close(fptr);
@@ -191,7 +191,7 @@ void* simple_realloc(void* ptr, size_t new_size) {
 
     if (block->size >= new_size) {
         // If the current block is already large enough, no need to allocate a new block
-        fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND);
+        fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND);
         sprintf(a, "block->size >= new_size in realloc for %p\n", ptr);
 	write(fptr, a, strlen(a));
 	close(fptr);
@@ -210,7 +210,7 @@ void* simple_realloc(void* ptr, size_t new_size) {
         }
 
         if (block->size >= new_size) {	    
-            fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND);
+            fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND);
             sprintf(a, "expanded %p into the next block\n", ptr);
 	    write(fptr, a, strlen(a));
 	    close(fptr);
@@ -257,7 +257,7 @@ void* simple_calloc(size_t num, size_t size) {
     // Initialize the allocated memory to zero
     memset(ptr, 0, total_size);
 
-    fptr = open("~/malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
+    fptr = open("/home/skramer/COMP310-Project/malloc_log.txt", O_WRONLY | O_APPEND | O_CREAT, 0644);
     sprintf(a, "Calloc'ed %zu bytes (%zu elements of size %zu) at address %p\n", total_size, num, size, ptr);
     write(fptr, a, strlen(a));
     close(fptr);
